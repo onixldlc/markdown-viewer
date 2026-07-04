@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Markdown Renderer</title>
+
+  <!-- Fonts (local) -->
+  <link rel="stylesheet" href="css/fonts.css">
+
+  <!-- highlight.js themes (toggled by theme) -->
+  <link id="hl-dark" rel="stylesheet" href="css/hljs-github-dark.min.css">
+  <link id="hl-light" rel="stylesheet" href="css/hljs-github.min.css" disabled>
+
+  <!-- Markdown parser + syntax highlighter -->
+  <script src="js/lib/marked.min.js"></script>
+  <script src="js/lib/highlight.min.js"></script>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app"
+       ondragover="app.onDragOver(event)"
+       ondragleave="app.onDragLeave(event)"
+       ondrop="app.onDrop(event)">
+
+    <!-- Header -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand__mark">M</div>
+        <span class="brand__name">markdown<span class="brand__dim">.render</span></span>
+      </div>
+
+      <div class="filechip">
+        <span class="filechip__caret">&#9656;</span>
+        <span id="filename" class="filechip__name">welcome.md</span>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="segmented" role="tablist">
+        <button id="tab-preview" class="seg is-active" onclick="app.setTab('preview')">Preview</button>
+        <button id="tab-source" class="seg" onclick="app.setTab('source')">Source</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <button class="btn" onclick="app.copyHtml()"><span id="copy-label">Copy HTML</span></button>
+      <button class="btn" onclick="app.exportHtml()">Export</button>
+      <button class="btn btn--accent" onclick="app.openFile()">Open file</button>
+      <button class="btn btn--icon" title="Toggle theme" onclick="app.toggleTheme()"><span id="theme-glyph">&#9790;</span></button>
+    </header>
+
+    <!-- Body -->
+    <div class="body">
+      <aside id="sidebar" class="sidebar">
+        <div class="sidebar__title">Outline</div>
+        <nav id="toc" class="toc"></nav>
+      </aside>
+
+      <main class="main">
+        <div id="scroll" class="scroll">
+          <div id="empty" class="empty" hidden>
+            <div class="empty__icon">&#8615;</div>
+            <div class="empty__text">
+              <div class="empty__head">Drop a Markdown file to render</div>
+              <div class="empty__sub">.md &nbsp;&middot;&nbsp; .markdown &nbsp;&middot;&nbsp; .txt</div>
+            </div>
+            <button class="btn btn--accent" onclick="app.openFile()">Browse files</button>
+          </div>
+
+          <div id="preview" class="md-body"></div>
+          <div id="source" class="source" hidden></div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Status bar -->
+    <footer class="statusbar">
+      <span id="st-mode" class="st-accent">PREVIEW</span>
+      <span class="st-sep">&#9474;</span>
+      <span><b id="st-words">0</b> words</span>
+      <span class="st-sep">&#9474;</span>
+      <span><b id="st-read">1</b> min read</span>
+      <span class="st-sep">&#9474;</span>
+      <span><b id="st-chars">0</b> chars</span>
+      <span class="st-sep">&#9474;</span>
+      <span><b id="st-lines">0</b> lines</span>
+      <span class="st-sep">&#9474;</span>
+      <span><b id="st-heads">0</b> headings</span>
+      <span class="spacer"></span>
+      <span class="badge">GFM</span>
+      <span id="st-theme">dark</span>
+      <span class="cursor"></span>
+    </footer>
+
+    <!-- Drag overlay -->
+    <div id="overlay" class="overlay" hidden>
+      <div class="overlay__box">Release to open file</div>
+    </div>
+
+    <input id="file" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" hidden onchange="app.onFileChange(event)">
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
