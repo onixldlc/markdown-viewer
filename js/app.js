@@ -46,7 +46,29 @@ const app = (() => {
     'Learn more at [the CommonMark spec](https://commonmark.org).'
   ].join('\n');
 
+  const SS_KEY = 'md.lastDoc';
+
   const state = { rawText: SAMPLE, fileName: 'welcome.md', tab: 'preview', theme: 'dark' };
+
+  function saveSession() {
+    try {
+      localStorage.setItem(SS_KEY, JSON.stringify({ rawText: state.rawText, fileName: state.fileName }));
+    } catch (e) {}
+  }
+
+  function restoreSession() {
+    try {
+      const raw = localStorage.getItem(SS_KEY);
+      if (!raw) return false;
+      const obj = JSON.parse(raw);
+      if (obj && typeof obj.rawText === 'string' && typeof obj.fileName === 'string') {
+        state.rawText = obj.rawText;
+        state.fileName = obj.fileName;
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }
 
   // --- element refs
   const $ = (id) => document.getElementById(id);
@@ -154,7 +176,13 @@ const app = (() => {
   // --- file loading
   function loadFile(file) {
     const r = new FileReader();
-    r.onload = () => { state.rawText = String(r.result || ''); state.fileName = file.name; state.tab = 'preview'; render(); };
+    r.onload = () => {
+      state.rawText = String(r.result || '');
+      state.fileName = file.name;
+      state.tab = 'preview';
+      saveSession();
+      render();
+    };
     r.readAsText(file);
   }
 
@@ -208,6 +236,7 @@ const app = (() => {
   // --- init
   function init() {
     els = { preview: $('preview'), source: $('source'), toc: $('toc'), scroll: $('scroll'), empty: $('empty') };
+    restoreSession();
     applyTheme();
     render();
     // marked/hljs may still be loading from CDN; re-render once ready
